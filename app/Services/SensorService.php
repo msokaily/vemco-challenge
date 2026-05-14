@@ -9,12 +9,13 @@ use Illuminate\Support\Facades\Cache;
 
 class SensorService implements SensorServiceInterface
 {
+    private const CACHE_GROUP = 'sensors';
     public function getAll(?string $status = null): LengthAwarePaginator
     {
         $page = request()->query('page', 1);
         $perPage = request()->query('per_page', 15);
-        $cacheKey = "sensors:index:status:" . ($status ?? '') . ":page:{$page}:per_page:{$perPage}";
-        return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($status, $page, $perPage) {
+        $cacheKey = self::CACHE_GROUP . ':index:status:' . ($status ?? '') . ':page:' . $page . ':per_page:' . $perPage;
+        return Cache::tags([self::CACHE_GROUP])->remember($cacheKey, now()->addMinutes(10), function () use ($status, $page, $perPage) {
             return Sensor::query()
                 ->with('location')
                 ->when($status, function ($query) use ($status) {
@@ -29,7 +30,7 @@ class SensorService implements SensorServiceInterface
     {
         $sensor = Sensor::create($data);
         $sensor->load('location');
-        Cache::flush();
+        Cache::tags([self::CACHE_GROUP, 'summary'])->flush();
         return $sensor;
     }
 }

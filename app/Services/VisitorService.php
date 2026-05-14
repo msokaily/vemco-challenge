@@ -9,10 +9,11 @@ use Illuminate\Support\Facades\Cache;
 
 class VisitorService implements VisitorServiceInterface
 {
+    private const CACHE_GROUP = 'visitors';
     public function getAll(?string $fromDate = null, ?string $toDate = null): Collection
     {
-        $cacheKey = 'visitors:index:date:' . ($fromDate ?? 'all') . ':' . ($toDate ?? 'all');
-        return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($fromDate, $toDate) {
+        $cacheKey = self::CACHE_GROUP . ':index:date:' . ($fromDate ?? 'all') . ':' . ($toDate ?? 'all');
+        return Cache::tags([self::CACHE_GROUP])->remember($cacheKey, now()->addMinutes(10), function () use ($fromDate, $toDate) {
             return Visitor::query()
                 ->with('location')
                 ->when($fromDate, function ($query) use ($fromDate) {
@@ -30,7 +31,7 @@ class VisitorService implements VisitorServiceInterface
     {
         $visitor = Visitor::create($data);
         $visitor->load(['location', 'sensor']);
-        Cache::flush();
+        Cache::tags([self::CACHE_GROUP, 'summary'])->flush();
         return $visitor;
     }
 }

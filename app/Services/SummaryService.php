@@ -7,10 +7,11 @@ use Illuminate\Support\Facades\Cache;
 
 class SummaryService implements SummaryServiceInterface
 {
+    private const CACHE_GROUP = 'summary';
     public function getSummary(?string $fromDate = null, ?string $toDate = null): array
     {
-        $cacheKey = 'summary:index:date:' . ($fromDate ?? 'all') . ':' . ($toDate ?? 'all');
-        return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($fromDate, $toDate) {
+        $cacheKey = self::CACHE_GROUP . ':index:date:' . ($fromDate ?? 'all') . ':' . ($toDate ?? 'all');
+        return Cache::tags([self::CACHE_GROUP])->remember($cacheKey, now()->addMinutes(10), function () use ($fromDate, $toDate) {
             $visitorCount = app(VisitorService::class)->getAll($fromDate, $toDate)->count();
             $sensorCount = app(SensorService::class)->getAll()->total();
             $locationCount = app(LocationService::class)->getAll()->count();
