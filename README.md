@@ -71,8 +71,8 @@ This keeps controllers thin and moves business logic into dedicated services.
 ### 1. Clone the repository
 
 ```bash
-git clone <your-repository-url>
-cd <project-folder>
+git clone https://github.com/msokaily/vemco-challenge.git
+cd vemco-challenge
 ```
 
 ### 2. Install dependencies
