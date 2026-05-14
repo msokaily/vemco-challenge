@@ -13,9 +13,9 @@ class LocationService implements LocationServiceInterface
     public function getAll(): Collection
     {
         $cacheKey = self::CACHE_GROUP . ':index';
-        return Cache::tags([self::CACHE_GROUP])->remember($cacheKey, now()->addMinutes(10), function () {
-            return Location::latest()->get();
-        });
+        return Location::hydrate(Cache::tags([self::CACHE_GROUP])->remember($cacheKey, now()->addMinutes(10), function () {
+            return Location::latest()->get()->toArray();
+        }));
     }
 
     public function create(array $data): Location

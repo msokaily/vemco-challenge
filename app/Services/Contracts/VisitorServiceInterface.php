@@ -7,6 +7,6 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface VisitorServiceInterface
 {
-    public function getAll(?string $date = null): Collection;
+    public function getAll(?string $fromDate = null, ?string $toDate = null): Collection;
     public function create(array $data): Visitor;
 }

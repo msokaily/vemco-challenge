@@ -16,7 +16,8 @@ class VisitorController extends Controller
 
     public function index(FilterVisitorRequest $request)
     {
-        $visitors = $this->visitorService->getAll($request->validated());
+        $params = $request->validated();
+        $visitors = $this->visitorService->getAll($params?->from_date ?? null, $params?->to_date ?? null);
         return $this->successResponse(VisitorResource::collection($visitors));
     }
     public function store(StoreVisitorRequest $request)

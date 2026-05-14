@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\FilterSummaryRequest;
-use App\Http\Resources\SummaryResource;
 use App\Services\Contracts\SummaryServiceInterface;
 
 class SummaryController extends Controller
@@ -15,7 +14,8 @@ class SummaryController extends Controller
 
     public function index(FilterSummaryRequest $request)
     {
-        $summary = $this->summaryService->getSummary($request->validated());
-        return $this->successResponse(SummaryResource::collection($summary));
+        $params = $request->validated();
+        $summary = $this->summaryService->getSummary($params['from_date'] ?? null, $params['to_date'] ?? null, $params['sensor_status'] ?? null);
+        return $this->successResponse($summary);
     }
 }

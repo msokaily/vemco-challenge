@@ -25,6 +25,17 @@ class FilterSensorRequest extends FormRequest
     {
         return [
             'status' => ['nullable', 'string', Rule::in(array_column(SensorStatus::cases(), 'value'))],
+            'page' => [
+                'nullable',
+                'integer',
+                'min:1',
+            ],
+            'per_page' => [
+                'nullable',
+                'integer',
+                'min:1',
+                'max:100',
+            ],
         ];
     }
 }

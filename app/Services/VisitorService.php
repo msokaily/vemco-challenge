@@ -13,7 +13,7 @@ class VisitorService implements VisitorServiceInterface
     public function getAll(?string $fromDate = null, ?string $toDate = null): Collection
     {
         $cacheKey = self::CACHE_GROUP . ':index:date:' . ($fromDate ?? 'all') . ':' . ($toDate ?? 'all');
-        return Cache::tags([self::CACHE_GROUP])->remember($cacheKey, now()->addMinutes(10), function () use ($fromDate, $toDate) {
+        return Visitor::hydrate(Cache::tags([self::CACHE_GROUP])->remember($cacheKey, now()->addMinutes(10), function () use ($fromDate, $toDate) {
             return Visitor::query()
                 ->with('location')
                 ->when($fromDate, function ($query) use ($fromDate) {
@@ -23,8 +23,8 @@ class VisitorService implements VisitorServiceInterface
                     $query->whereDate('date', '<=', $toDate);
                 })
                 ->latest('date')
-                ->get();
-        });
+                ->get()->toArray();
+        }));
     }
 
     public function create(array $data): Visitor
