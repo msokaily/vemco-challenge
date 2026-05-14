@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use App\Enums\SensorStatus;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Sensor extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'name',
         'status',

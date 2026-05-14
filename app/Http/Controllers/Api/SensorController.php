@@ -16,7 +16,8 @@ class SensorController extends Controller
 
     public function index(FilterSensorRequest $request)
     {
-        $sensors = $this->sensorService->getAll($request->validated()?->status ?? null);
+        $params = $request->validated();
+        $sensors = $this->sensorService->getAll($params['status'] ?? null);
         return $this->successResponse($sensors);
     }
 

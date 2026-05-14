@@ -35,17 +35,24 @@ class StoreVisitorRequest extends FormRequest
     {
         return [
             function (Validator $validator) {
-                $validator->after(function ($validator) {
-                    $locationId = $this->input('location_id');
-                    $sensorId = $this->input('sensor_id');
+                $locationId = $this->input('location_id');
+                $sensorId = $this->input('sensor_id');
 
-                    if (!Sensor::where('id', $sensorId)->where('location_id', $locationId)->exists()) {
-                        $validator->errors()->add(
-                            'sensor_id',
-                            'The selected sensor does not belong to the specified location.'
-                        );
-                    }
-                });
+                if (! $locationId || ! $sensorId) {
+                    return;
+                }
+
+                $sensorBelongsToLocation = Sensor::query()
+                    ->whereKey($sensorId)
+                    ->where('location_id', $locationId)
+                    ->exists();
+
+                if (! $sensorBelongsToLocation) {
+                    $validator->errors()->add(
+                        'sensor_id',
+                        'The selected sensor does not belong to the selected location.'
+                    );
+                }
             },
         ];
     }
